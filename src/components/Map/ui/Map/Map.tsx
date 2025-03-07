@@ -1,8 +1,13 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useUnit } from 'effector-react'
 import { MapContainer, TileLayer, LayersControl } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-import { $layer, $mapObjects, setLayer, setMapObjects } from '../../model/mapModel'
+import {
+	$layer,
+	$mapObjects,
+	setLayer,
+	setMapObjects,
+} from '../../model/mapModel'
 import { PRESS, TEMP, TITLE_LAYER_URL, WS_URL } from '../../model/const'
 import MapAutoFit from '../MapAutoFit/MapAutoFit'
 import SensorMarker from '../MarkerMap/MarkerMap'
@@ -28,6 +33,8 @@ export const Map: React.FC = () => {
 		}
 	}, [])
 
+	const dataArray = useMemo(() => Array.from(mapObjects.values()), [mapObjects])
+
 	return (
 		<MapContainer
 			center={[55.751244, 37.618423]}
@@ -36,7 +43,7 @@ export const Map: React.FC = () => {
 			zoomControl={false}
 			doubleClickZoom={false}
 		>
-			<MapAutoFit mapObjects={mapObjects} />
+			<MapAutoFit mapObjects={dataArray} />
 			<LayersControl position='topright'>
 				<LayersControl.BaseLayer checked name={TEMP}>
 					<TileLayer
@@ -52,7 +59,7 @@ export const Map: React.FC = () => {
 				</LayersControl.BaseLayer>
 			</LayersControl>
 
-			{mapObjects.map(obj => (
+			{dataArray.map(obj => (
 				<SensorMarker key={obj.uuid} obj={obj} layer={layer} />
 			))}
 		</MapContainer>
